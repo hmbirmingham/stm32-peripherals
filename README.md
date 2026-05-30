@@ -1,6 +1,6 @@
 # 01-blinky
 
-Bare-metal LED blink on the STM32F411RE Nucleo board. No HAL, no libraries — pure register-level C.
+Bare-metal LED blink on the STM32F411RE Nucleo board. No HAL, no libraries, pure register-level C.
 
 ## What it does
 Toggles the onboard green LED (PA5) at roughly 1Hz by directly writing to the GPIO peripheral registers via memory-mapped I/O.
