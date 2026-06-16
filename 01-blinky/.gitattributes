@@ -1,3 +1,0 @@
-*.s linguist-vendored
-*.S linguist-vendored
-Startup/*.s linguist-vendored
