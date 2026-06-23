@@ -1,11 +1,25 @@
-.DS_Store
-.settings/
+# Build artifacts
 Debug/
-.cproject
-.project
-*.ld
+Release/
 *.elf
 *.bin
+*.hex
+*.map
+*.list
+
+# IDE files
+.cproject
+.project
+.settings/
+*.launch
+
+# Linker scripts (auto-generated)
+STM32F411RETX_FLASH.ld
+STM32F411RETX_RAM.ld
+
+# Object files
 *.o
 *.d
-*.map
+*.su
+*.cyclo
+EOF
