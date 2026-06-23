@@ -1,1 +1,11 @@
 .DS_Store
+.settings/
+Debug/
+.cproject
+.project
+*.ld
+*.elf
+*.bin
+*.o
+*.d
+*.map
