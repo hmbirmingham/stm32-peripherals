@@ -1,3 +1,10 @@
 *.s linguist-vendored
 *.S linguist-vendored
 Startup/*.s linguist-vendored
+*.s linguist-vendored
+*.S linguist-vendored
+*.ld linguist-vendored
+Makefile linguist-vendored
+*.mk linguist-vendored
+subdir.mk linguist-vendored
+makefile linguist-vendored
