@@ -1,6 +1,6 @@
 # 02-uart
 
-Register-level UART transmit driver on the STM32F411RE Nucleo board. No HAL, no libraries — pure register-level C.
+Register-level UART transmit driver on the STM32F411RE Nucleo board. No HAL, no libraries, pure register-level C.
 
 ## What it does
 Transmits "Hello from STM32" repeatedly over USART2 at 115200 baud by directly configuring the UART peripheral registers via memory-mapped I/O.
@@ -8,7 +8,7 @@ Transmits "Hello from STM32" repeatedly over USART2 at 115200 baud by directly c
 ## How it works
 
 ### 1. Enable clocks
-Every peripheral on the STM32 is off by default. GPIOA and USART2 clocks are enabled via the RCC registers before anything else. Skipping this step is the most common mistake — the peripheral simply won't respond.
+Every peripheral on the STM32 is off by default. GPIOA and USART2 clocks are enabled via the RCC registers before anything else. Skipping this step is the most common mistake, the peripheral simply won't respond.
 
 ### 2. Configure PA2 as alternate function
 PA2 is the USART2 TX pin on the Nucleo. It must be set to alternate function mode (binary 10 in MODER) so the USART2 peripheral drives it instead of the GPIO output register.
