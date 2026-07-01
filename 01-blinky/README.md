@@ -12,7 +12,7 @@ The STM32F411RE exposes all hardware peripherals as memory-mapped registers. To 
 2. Configure PA5 as a general-purpose output via the MODER register (`0x40020000`)
 3. Toggle bit 5 of the ODR register (`0x40020014`) in an infinite loop with a software delay
 
-No HAL, no CMSIS, no vendor headers — just `stdint.h` and direct memory access.
+No HAL, no CMSIS, no vendor headers, just `stdint.h` and direct memory access.
 
 ## Hardware
 - STM32 Nucleo-F411RE
