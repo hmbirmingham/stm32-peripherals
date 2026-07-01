@@ -33,10 +33,10 @@ Before writing each byte to the data register, the TXE flag (bit 7 of SR) is pol
 | RCC_APB1ENR | 0x40023840 | Enable USART2 clock |
 | GPIOA_MODER | 0x40020000 | Set PA2 to alternate function mode |
 | GPIOA_AFRL | 0x40020020 | Set PA2 alternate function to AF7 (USART2) |
-| USART2_BRR | 0x40004408 | Baud rate register — set to 115200 |
+| USART2_BRR | 0x40004408 | Baud rate register - set to 115200 |
 | USART2_CR1 | 0x4000440C | Enable USART2 and TX |
-| USART2_SR | 0x40004400 | Status register — poll TXE before each write |
-| USART2_DR | 0x40004404 | Data register — write byte to transmit |
+| USART2_SR | 0x40004400 | Status register - poll TXE before each write |
+| USART2_DR | 0x40004404 | Data register - write byte to transmit |
 
 ## Hardware
 - STM32 Nucleo-F411RE
@@ -48,7 +48,7 @@ Before writing each byte to the data register, the TXE flag (bit 7 of SR) is pol
 Compiled with ARM GCC toolchain in STM32CubeIDE targeting ARM Cortex-M4.
 
 ## What I learned
-- How UART works at the register level — clock enable, GPIO alternate function, baud rate calculation, TX polling
-- The alternate function system on STM32 — each pin can connect to multiple peripherals, AFRL selects which one
-- Why baud rate must match on both sides — mismatched rates produce garbled output
+- How UART works at the register level: clock enable, GPIO alternate function, baud rate calculation, TX polling
+- The alternate function system on STM32: each pin can connect to multiple peripherals, AFRL selects which one
+- Why baud rate must match on both sides: mismatched rates produce garbled output
 - The pattern for bringing up any STM32 peripheral: enable clock → configure GPIO → set alternate function → configure peripheral → enable → use
