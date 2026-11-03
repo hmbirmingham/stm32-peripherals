@@ -1,10 +1,9 @@
-*.s linguist-vendored
-*.S linguist-vendored
-Startup/*.s linguist-vendored
-*.s linguist-vendored
-*.S linguist-vendored
-*.ld linguist-vendored
-Makefile linguist-vendored
-*.mk linguist-vendored
-subdir.mk linguist-vendored
-makefile linguist-vendored
+# Vendored: everything ST generated for me. This keeps the GitHub language bar
+# showing the register level C I actually wrote, not boilerplate I did not.
+*.s                 linguist-vendored
+*.S                 linguist-vendored
+*.ld                linguist-vendored
+*.mk                linguist-vendored
+[Mm]akefile         linguist-vendored
+**/Src/syscalls.c   linguist-vendored
+**/Src/sysmem.c     linguist-vendored
