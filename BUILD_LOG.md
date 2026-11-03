@@ -119,8 +119,6 @@ Things I noticed while closing this repository out and chose not to fix here.
 - `main` was not protected. Eight commits reached it directly rather than
   through the branch flow, which is how the integration branch ended up behind
   the default branch. Worth setting up on day one of the next repository.
-- The `session-1-uart-baud` branch is stale and merged nowhere. It can be
-  deleted once UART is confirmed.
 - No TC interrupt. TXE fires when the shift register accepts a byte, not when
   the last bit has left the pin. That distinction only matters for something
   like releasing an RS-485 driver enable, which this does not do.
