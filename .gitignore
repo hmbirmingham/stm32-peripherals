@@ -22,4 +22,7 @@ STM32F411RETX_RAM.ld
 *.d
 *.su
 *.cyclo
-EOF
+
+# macOS
+.DS_Store
+**/.DS_Store

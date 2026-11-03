@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "../Inc/brr.h"
 
 // RCC
 #define RCC_AHB1ENR  (*(volatile uint32_t *)0x40023830)
@@ -27,9 +28,8 @@ void uart_init(void) {
     GPIOA_AFRL &= ~(0xF << 8);
     GPIOA_AFRL |=  (0x7 << 8);
 
-    // Set baud rate to 115200 (assuming 16MHz clock)
-    // BRR = 16000000 / 115200 = 138.88 → mantissa=138, fraction=14
-    USART2_BRR = (138 << 4) | 14;
+    // 115200 baud on HSI 16 MHz (OVER8 = 0): BRR = fck / baud = 139 = 0x8B
+    USART2_BRR = brr_from(16000000u, 115200u);
 
     // Enable USART2, TX
     USART2_CR1 |= (1 << 13) | (1 << 3);
