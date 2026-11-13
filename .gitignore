@@ -1,6 +1,7 @@
 # Build artifacts
 Debug/
 Release/
+build/
 *.elf
 *.bin
 *.hex
@@ -12,10 +13,6 @@ Release/
 .project
 .settings/
 *.launch
-
-# Linker scripts (auto-generated)
-STM32F411RETX_FLASH.ld
-STM32F411RETX_RAM.ld
 
 # Object files
 *.o
