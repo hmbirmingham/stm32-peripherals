@@ -10,6 +10,20 @@ calculation passes, but I have not confirmed it on hardware yet. It becomes
 Complete when I have a logic analyzer capture of PA2 saved here showing 115200
 baud and a clean decode.
 
+## Build
+
+```
+make
+make flash
+```
+
+No IDE needed. The Makefile uses the ARM toolchain that ships inside
+STM32CubeIDE, or `arm-none-eabi-gcc` from PATH. `make test` runs the host test
+for the baud rate calculation with no board attached.
+
+The linker script is the one STM32CubeIDE generated. It is committed because
+without it there is nothing to link against.
+
 ## Pins
 
 | Signal | Pin | Nucleo header | Alternate function |
@@ -108,7 +122,7 @@ unreachable.
 
 Not yet done. This is the procedure I will follow.
 
-1. Build in STM32CubeIDE and flash with st-flash
+1. Build and flash with `make && make flash` from this directory
 2. Open the adapter on the Mac and look for the message repeating cleanly
 
 ```
