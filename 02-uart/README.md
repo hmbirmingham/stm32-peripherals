@@ -5,10 +5,13 @@ at the register level with no HAL.
 
 ## Status
 
-In Progress. The driver is written and the host test for the baud rate
-calculation passes, but I have not confirmed it on hardware yet. It becomes
-Complete when I have a logic analyzer capture of PA2 saved here showing 115200
-baud and a clean decode.
+Complete, with one piece of documentation outstanding.
+
+I confirmed this on hardware on 2026-11-13. The driver transmits correctly and
+the error handling works. What I have not done is measure the bit period
+directly with a logic analyzer, because I do not have the cable for it. The baud
+rate is confirmed indirectly instead, by an independent receiver decoding it
+cleanly. The results below say exactly what was and was not measured.
 
 ## Build
 
@@ -118,26 +121,67 @@ These errors are receive side, which is why RX is enabled at all. With transmit
 only, none of these flags can ever be raised and the handling would be
 unreachable.
 
-## How to test it
+## How I confirmed it
 
-Not yet done. This is the procedure I will follow.
+Measured on 2026-11-13 with the Nucleo connected to a Mac by its ST-LINK USB
+cable and nothing else attached. PA2 and PA3 reach the ST-LINK virtual COM port
+through the solder bridges on the board, so that one cable carries the debug
+interface and the serial port at the same time.
 
-1. Build and flash with `make && make flash` from this directory
-2. Open the adapter on the Mac and look for the message repeating cleanly
+### Transmit
+
+`screen /dev/tty.usbmodem1403 115200` showed `Hello from STM32` repeating
+cleanly: 35 consecutive lines, no corruption, no dropped characters.
+
+This binary contains no polling path at all. `uart_send_char` does not exist in
+it, so the only code that can write to the data register is
+`USART2_IRQHandler`. Clean output therefore proves the interrupt fired, the NVIC
+enable took effect, and the ring buffer drained.
+
+Reading the driver state over SWD with st-util and gdb while it ran:
 
 ```
-ls /dev/tty.usb*
-screen /dev/tty.usbserial-0001 115200
+tx_head = 18  tx_tail = 18
 ```
 
-3. Probe PA2 on CN10 pin 35 with ground on CN10 pin 9, sample at 1 MHz or
-   faster, trigger on the falling edge of the start bit since the line idles
-   high
-4. Measure the narrowest pulse and confirm it is about 8.69 microseconds, then
-   decode as 115200 8N1 and confirm the text
-5. Deliberately cause a framing error by sending into PA3 from a terminal set to
-   9600 while the board is at 115200, and confirm `uart_err_framing` increments
-6. Save the capture here and change the status above to Complete
+18 is the length of `Hello from STM32\r\n`. Head and tail converge after every
+message, which is the ring buffer emptying completely each time rather than
+slowly filling.
+
+### Receive and error handling
+
+I sent single bytes into PA3 from the Mac at a matching and at a mismatched
+baud, reading the counters over SWD after each one.
+
+| Sent | Baud | framing | last_rx |
+|---|---|---|---|
+| 0x55 | 115200, matching | 0 | 0x55 |
+| 0x55 | 9600, mismatched | 5 | 0x00 |
+| ABCDE | 115200, matching | 0 | 0x45 |
+
+The controls are what make this meaningful. Errors appear only when I inject a
+mismatch and never otherwise. A matching byte lands in `uart_last_rx` intact. A
+mismatched byte raises framing and is not stored, so the driver does not hand
+corrupt data off as received. `ABCDE` leaves 0x45, which is `E`, so every byte
+was serviced, and overrun stayed at 0 because each was read before the next
+arrived.
+
+One byte at the wrong baud raises five framing errors rather than one. That is
+expected rather than a fault. A 9600 frame lasts about 1.04 ms, which spans
+roughly 120 bit periods at 115200, so the receiver chops one slow byte into
+several mis-framed ones.
+
+### What I did not measure
+
+I did not put a logic analyzer on PA2, so there is no measured bit period and no
+capture saved here. The expected value is 8.69 microseconds, from BRR 139 giving
+115108 baud.
+
+The baud rate is still independently confirmed. The ST-LINK virtual COM port is
+a separate receiver with its own clock, and it decoded 35 lines without
+corruption, which cannot happen unless the real baud sits inside its tolerance
+of 115200. A capture would add a measured number, not missing proof. I will add
+it when I have the cable.
 
 ## Key registers
 

@@ -10,17 +10,21 @@ raw memory addresses instead of generated code.
 | Folder | Peripheral | Status |
 |---|---|---|
 | 01-blinky | GPIO, register level LED toggle on PA5 | Complete |
-| 02-uart | USART2, interrupt driven TX at 115200 baud | In Progress |
+| 02-uart | USART2, interrupt driven TX at 115200 baud | Complete |
 
-02-uart stays In Progress until I confirm the interrupt driven driver on hardware
-and save a logic analyzer capture of PA2. The driver and the baud rate
-calculation are written, and the calculation has a host test that passes.
+Both are confirmed on hardware. I confirmed 02-uart on 2026-11-13 by serial
+decode and by reading the driver state over SWD. The one thing still missing is
+a logic analyzer capture of PA2, which is documentation rather than proof.
+`02-uart/README.md` says exactly what was measured.
 
 ## Hardware
 
 - STM32 Nucleo-F411RE
-- CP2102 USB UART adapter for serial monitoring
-- Logic analyzer for bus verification
+- ST-LINK virtual COM port for serial monitoring, over the board's own USB cable
+- Logic analyzer for bus verification, once I have a cable for it
+
+I usually flash from a Raspberry Pi with st-flash, but it works the same
+directly from the Mac.
 
 ## Toolchain
 
