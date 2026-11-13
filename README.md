@@ -28,17 +28,22 @@ ARM GCC, STM32CubeIDE, st-flash, macOS
 
 ## Build and flash
 
-I build in STM32CubeIDE, which generates the makefile and the linker scripts
-under each project's `Debug` directory. Neither is committed, so a fresh clone
-has to be built from the IDE before there is anything to flash.
-
-1. Open the project folder in STM32CubeIDE
-2. Project, then Build All
-3. Flash the resulting binary with st-flash
+02-uart builds with make and needs no IDE. The ARM toolchain ships inside
+STM32CubeIDE, so the Makefile looks for it there, or uses `arm-none-eabi-gcc`
+from PATH if you have it installed separately.
 
 ```
-st-flash --reset write Debug/02-uart.bin 0x08000000
+cd 02-uart
+make
+make flash
 ```
+
+`make flash` writes the binary to 0x08000000 over ST-LINK. `make clean` removes
+the build directory. Pass `TOOLCHAIN=` if your toolchain lives somewhere the
+Makefile does not look.
+
+01-blinky has no build system. Its CubeIDE project files were removed early on,
+so it is kept as a register level reference rather than something I rebuild.
 
 ## Testing the baud rate calculation
 
@@ -47,8 +52,7 @@ attached.
 
 ```
 cd 02-uart
-cc -std=c11 -Wall -Wextra -o /tmp/test_brr test/test_brr.c
-/tmp/test_brr
+make test
 ```
 
 ## What is next
