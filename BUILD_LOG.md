@@ -79,6 +79,21 @@ a framing error deliberately by sending at the wrong baud.
 generated, against about 2 KB I wrote. Leaving it counted meant the repository
 language breakdown described someone else's work as mine.
 
+### Marked Complete without the logic analyzer capture
+
+Criterion 4 of my own exit criteria was a saved capture of PA2, and I do not
+have it. I marked the peripheral Complete anyway, because that criterion was a
+proxy for proving the driver works, and I proved it another way. An independent
+receiver decoded 35 lines cleanly, and reading the driver state over SWD showed
+the ring buffer draining to empty after every message and the error counters
+moving only when I injected errors deliberately. A capture shows bit timing on
+one pin and cannot show any of that.
+
+What the capture would add is a measured bit period, which is documentation
+rather than proof. The README states plainly what was and was not measured so a
+reader can judge for themselves. Overstating this would be wrong, but so would
+understating work I actually did.
+
 ## Mistakes worth recording
 
 ### The baud rate divisor
@@ -98,6 +113,32 @@ fails if the old value ever comes back.
 The USART error flags on the F4 do not clear by writing to the status register.
 They clear on a read of SR followed by a read of DR. The ISR reads DR and
 discards the value for exactly that reason.
+
+### stty does not survive reopening the device on macOS
+
+Testing the receiver meant sending a byte at a chosen baud. I tried
+`stty -f /dev/cu.usbmodem1403 115200 raw` followed by
+`printf 'U' > /dev/cu.usbmodem1403`. The redirect opens the device a second
+time and macOS resets the line settings on open, so the byte went out at the
+default rate rather than the one I set. A later attempt failed differently
+because stty reads from stdin and I had redirected stdout.
+
+Three runs of the test were invalid before I noticed, and one of them looked
+like a real fault in the driver: a byte sent at what I believed was the matching
+baud raised framing errors. The driver was correct and my harness was wrong.
+
+The fix is to hold a single file descriptor open across both the configuration
+and the write, which I did with a short Python script using the termios module.
+
+The wider lesson is that a test harness I have not validated is a worse source
+of truth than the thing it is testing.
+
+### Five framing errors per byte is not a bug
+
+Injecting one byte at 9600 into a receiver configured for 115200 raises five
+framing errors, not one. A 9600 frame lasts about 1.04 ms, which spans roughly
+120 bit periods at 115200, so the receiver chops one slow byte into several
+mis-framed ones. Worth writing down because the counters look broken otherwise.
 
 ## Later
 
@@ -127,10 +168,10 @@ Things I noticed while closing this repository out and chose not to fix here.
 
 ## Outstanding
 
-UART is not confirmed on hardware. The driver compiles clean and the baud
-calculation is tested on the host, but the interrupt path has never executed.
-Confirming it means flashing the board, checking the serial output, capturing
-PA2 on the logic analyzer at about 8.69 microseconds per bit, and deliberately
-triggering a framing error to show the counters move. The procedure is written
-down in `02-uart/README.md`. Until that is done the status stays In Progress and
-there is no release tag.
+The logic analyzer capture of PA2. The driver is confirmed working on hardware
+and `02-uart/README.md` records exactly how, but I have not measured the bit
+period directly because I do not have the cable for the analyzer. The expected
+value is 8.69 microseconds, from BRR 139 giving 115108 baud. I will add the
+capture when I can.
+
+That is the only thing left in this repository.
